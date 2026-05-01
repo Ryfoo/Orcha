@@ -1,0 +1,20 @@
+tasks:
+  read-source:
+    type: file
+    operation: read
+    path: "{{$input}}"
+    output_type: text
+
+  save:
+    type: file
+    operation: write
+    path: "{{$env.OUT_PATH}}"
+    content: "{{$input}}"
+    output_type: filepath
+
+pipelines:
+  copy:
+    description: read a file and write its contents to OUT_PATH
+    steps:
+      - task: read-source
+      - task: save
