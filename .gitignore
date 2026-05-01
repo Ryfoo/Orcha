@@ -1,0 +1,10 @@
+orcha-design-spec.md
+dist/
+*.test
+*.out
+__pycache__/
+*.egg-info/
+build/
+.pytest_cache/
+.venv/
+venv/
