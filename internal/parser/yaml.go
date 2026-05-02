@@ -38,6 +38,7 @@ func Parse(data []byte) (*Document, error) {
 			return nil, fmt.Errorf("task %q is empty", name)
 		}
 		t.Name = name
+		applyDefaults(t)
 		if err := validateTask(t); err != nil {
 			return nil, err
 		}
@@ -59,10 +60,32 @@ func Parse(data []byte) (*Document, error) {
 	return &doc, nil
 }
 
-func validateTask(t *Task) error {
-	if t.OutputType == "" {
-		return fmt.Errorf("task %q: output_type is required", t.Name)
+// applyDefaults fills in optional fields that the user omitted. Order
+// matters: file output_type depends on operation, so operation is set first.
+// model is intentionally NOT defaulted here — it's resolved at runtime in the
+// AI runner so we can look up the provider plugin's default.
+func applyDefaults(t *Task) {
+	switch t.Type {
+	case KindHTTP:
+		if t.Method == "" {
+			t.Method = "GET"
+		}
+	case KindFile:
+		if t.Operation == "" {
+			t.Operation = OpRead
+		}
 	}
+
+	if t.OutputType == "" {
+		if t.Type == KindFile && (t.Operation == OpWrite || t.Operation == OpAppend) {
+			t.OutputType = TypeFilepath
+		} else {
+			t.OutputType = TypeText
+		}
+	}
+}
+
+func validateTask(t *Task) error {
 	switch t.OutputType {
 	case TypeText, TypeJSON, TypeFilepath, TypeList:
 	default:
@@ -74,19 +97,10 @@ func validateTask(t *Task) error {
 		if t.Provider == "" {
 			return fmt.Errorf("task %q: ai task requires 'provider'", t.Name)
 		}
-		if t.Model == "" {
-			return fmt.Errorf("task %q: ai task requires 'model'", t.Name)
-		}
-		if t.System == "" {
-			return fmt.Errorf("task %q: ai task requires 'system'", t.Name)
-		}
 		if t.Prompt == "" {
 			return fmt.Errorf("task %q: ai task requires 'prompt'", t.Name)
 		}
 	case KindHTTP:
-		if t.Method == "" {
-			return fmt.Errorf("task %q: http task requires 'method'", t.Name)
-		}
 		switch strings.ToUpper(t.Method) {
 		case "GET", "POST", "PUT", "DELETE", "PATCH", "HEAD":
 		default:
@@ -98,8 +112,6 @@ func validateTask(t *Task) error {
 	case KindFile:
 		switch t.Operation {
 		case OpRead, OpWrite, OpAppend:
-		case "":
-			return fmt.Errorf("task %q: file task requires 'operation'", t.Name)
 		default:
 			return fmt.Errorf("task %q: unknown file operation %q", t.Name, t.Operation)
 		}
