@@ -33,6 +33,10 @@ func New() *Provider {
 
 func (p *Provider) Name() string { return "openai" }
 
+// DefaultModel is used when an AI task omits `model:`. Picks the cheap-and-fast
+// chat model so default workflows don't surprise users with token bills.
+func (p *Provider) DefaultModel() string { return "gpt-4o-mini" }
+
 type chatMessage struct {
 	Role    string `json:"role"`
 	Content string `json:"content"`
