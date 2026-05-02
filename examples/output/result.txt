@@ -1,6 +1,0 @@
-- Renewable energy, particularly solar and wind, has rapidly expanded in 2025, with over 600 gigawatts of new solar installations globally.
-- Key regions like China, the EU, and the US have achieved national records in renewable energy capacity.
-- Battery storage costs have dropped by approximately 90% since 2015, enabling better integration of renewable sources with demand.
-- Some regional grids now operate on over 70% renewable energy for extended periods without needing to reduce output.
-- Ongoing challenges include grid stability, mineral supply chain issues, and permitting delays.
-- The 2020s are shaping up to be a critical decade where clean electricity becomes mainstream rather than niche.
