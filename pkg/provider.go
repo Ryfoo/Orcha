@@ -33,5 +33,9 @@ type CompletionResponse struct {
 // Provider is the contract every AI backend must implement.
 type Provider interface {
 	Name() string
+	// DefaultModel is used when an AI task omits the `model:` field. Return
+	// "" if the provider has no sensible default (the engine will then
+	// require model: to be set).
+	DefaultModel() string
 	Complete(req CompletionRequest) (CompletionResponse, error)
 }
