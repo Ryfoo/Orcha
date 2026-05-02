@@ -81,7 +81,8 @@ pipelines:
 	}
 }
 
-func TestParseRejectsMissingFields(t *testing.T) {
+func TestParseRejectsMissingPrompt(t *testing.T) {
+	// model and system are now optional (defaulted); only prompt is required.
 	yaml := []byte(`
 tasks:
   ai-incomplete:
@@ -90,6 +91,6 @@ tasks:
     output_type: text
 `)
 	if _, err := Parse(yaml); err == nil {
-		t.Fatal("expected validation error for missing model/system/prompt")
+		t.Fatal("expected validation error for missing prompt")
 	}
 }
