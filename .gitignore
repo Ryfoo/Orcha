@@ -9,4 +9,4 @@ build/
 .venv/
 venv/
 __debug*
-examples/
+examples/examples
