@@ -56,7 +56,7 @@ $ orcha run summarize-article -f ./article.txt
 ### Installation
 
 ```bash
-pip install orcha
+pip install orcha-dev
 ```
 
 The first time you run `orcha`, it downloads a small Go binary to

@@ -89,9 +89,12 @@ and the Python downloader will find the binary for the user's platform.
 ## 6. Publish to PyPI
 
 ```bash
-python3 -m twine check  dist/orcha-$VERSION-py3-none-any.whl dist/orcha-$VERSION.tar.gz
-python3 -m twine upload dist/orcha-$VERSION-py3-none-any.whl dist/orcha-$VERSION.tar.gz
+python3 -m twine check  dist/orcha_dev-$VERSION-py3-none-any.whl dist/orcha_dev-$VERSION.tar.gz
+python3 -m twine upload dist/orcha_dev-$VERSION-py3-none-any.whl dist/orcha_dev-$VERSION.tar.gz
 ```
+
+> Note: PyPI normalizes the distribution name `orcha-dev` to `orcha_dev` in
+> wheel and sdist filenames (PEP 503). The import path stays `import orcha`.
 
 `twine check` validates the wheel's metadata (long_description, classifiers,
 etc.) before you push; if it fails, fix the issue and rebuild — do not upload
@@ -103,7 +106,7 @@ In a fresh shell, ideally a different machine or a clean venv:
 
 ```bash
 python3 -m venv /tmp/orcha-test && source /tmp/orcha-test/bin/activate
-pip install orcha
+pip install orcha-dev
 orcha version          # should print $VERSION
 orcha run --help       # should show the `run` subcommand
 ```

@@ -85,4 +85,4 @@ release-python:
 	@sed -i.bak 's/^__version__ = ".*"$$/__version__ = "$(VERSION)"/' $(PY_DIR)/orcha/__init__.py
 	@rm -f $(PY_DIR)/orcha/__init__.py.bak
 	@cd $(PY_DIR) && python3 -m build --outdir ../$(DIST) >/dev/null
-	@ls $(DIST)/orcha-*.whl $(DIST)/orcha-*.tar.gz | sed 's/^/    /'
+	@ls $(DIST)/orcha_dev-*.whl $(DIST)/orcha_dev-*.tar.gz | sed 's/^/    /'
