@@ -14,7 +14,9 @@ import (
 	_ "github.com/ryfoo/orcha/pkg/openai"
 )
 
-const version = "0.1.0"
+// version is set at link time by the Makefile via -ldflags. The "dev" default
+// surfaces in unreleased local builds.
+var version = "dev"
 
 func main() {
 	if len(os.Args) > 1 {
