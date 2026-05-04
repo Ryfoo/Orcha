@@ -1,5 +1,9 @@
 # Orcha
 
+[![PyPI version](https://badge.fury.io/py/orcha_dev.svg)](https://badge.fury.io/py/orcha_dev)
+[![Python Versions](https://img.shields.io/pypi/pyversions/orcha_dev.svg)](https://pypi.org/project/orcha_dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Unix pipes for AI workflows. Define reusable tasks and linear pipelines in one
 `orcha.yaml` file; execute them with one command.
 
