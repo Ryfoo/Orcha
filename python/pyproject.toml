@@ -9,7 +9,7 @@ description = "Unix pipes for AI workflows. Define tasks and pipelines in YAML; 
 readme = "README.md"
 requires-python = ">=3.9"
 license = "MIT"
-license-files = ["../LICENSE"]
+license-files = ["LICENSE"]
 authors = [{ name = "Orcha Authors" }]
 keywords = ["ai", "workflow", "pipeline", "yaml", "openai", "llm", "automation"]
 classifiers = [
