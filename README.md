@@ -7,13 +7,14 @@
 Unix pipes for AI workflows. Define reusable tasks and linear pipelines in one
 `orcha.yaml` file; execute them with one command.
 
-Orcha is a single-binary Go program, that helps developers, create their own automated DAG workflow, with ease. Managing multiple tasks with one call!
+Orcha is a single-binary Go program, that helps developers, create their own automated DAG pipelines, with ease. Managing multiple tasks with one call!
 say bye to repetitve: 
 - file operation.
 - API calls. 
 - HTTP requests. 
 
-Instead design the workflow as a chad, run one command.
+
+Instead design your pipeline as a chad, run one command.
 
 
 ```yaml
@@ -60,11 +61,14 @@ $ orcha run summarize-article -f ./article.txt
 ### Installation
 
 ```bash
+#thin Python wrapper around the single-binary
+
 pip install orcha-dev
 ```
 
 The first time you run `orcha`, it downloads a small Go binary to
 `~/.orcha/bin/` and verifies its sha256. Subsequent runs are zero-network.
+
 
 ### Hello, world
 
@@ -122,16 +126,6 @@ for event in o.run("summarize-article", "./article.txt"):
 result = o.run_sync("summarize-article", "./article.txt")
 ```
 
-### Examples
-
-`examples/orcha.yaml` defines a tiny three-step pipeline that reads a file,
-summarizes it with OpenAI, and writes the result to disk:
-
-```bash
-cd examples
-export OPENAI_API_KEY=sk-...
-orcha run summarize-and-translate -i topic.txt
-```
 
 ## Project structure
 
