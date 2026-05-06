@@ -62,6 +62,7 @@ func Names() []string {
 //
 //	openai     -> OPENAI_API_KEY
 //	anthropic  -> ANTHROPIC_API_KEY
+//	deepseek   -> DEEPSEEK_API_KEY
 //	<other>    -> ORCHA_<NAME>_API_KEY (uppercased, hyphens to underscores)
 //
 // Returns "" if no env var is set; callers decide whether the provider needs
@@ -73,6 +74,8 @@ func ResolveAPIKey(providerName string) string {
 		return os.Getenv("OPENAI_API_KEY")
 	case "ANTHROPIC":
 		return os.Getenv("ANTHROPIC_API_KEY")
+	case "DEEPSEEK":
+		return os.Getenv("DEEPSEEK_API_KEY")
 	default:
 		return os.Getenv("ORCHA_" + upper + "_API_KEY")
 	}

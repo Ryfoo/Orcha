@@ -21,6 +21,8 @@ import (
 	"github.com/ryfoo/orcha/internal/parser"
 	"github.com/ryfoo/orcha/internal/runners"
 
+	_ "github.com/ryfoo/orcha/pkg/anthropic"
+	_ "github.com/ryfoo/orcha/pkg/deepseek"
 	_ "github.com/ryfoo/orcha/pkg/openai"
 )
 

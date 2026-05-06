@@ -3,6 +3,7 @@ DIST      := dist
 BIN       := orcha
 REPO      := ryfoo/orcha
 PY_DIR    := python
+NPM_DIR   := npm
 
 # VERSION is read from the file at the repo root and stamped into both the Go
 # binary (via -ldflags) and the Python wheel (via a sed pass over __init__.py
@@ -11,7 +12,7 @@ VERSION := $(shell cat VERSION)
 LDFLAGS := -s -w -X main.version=$(VERSION)
 
 .PHONY: build build-run build-debug build-all test clean \
-        release-binaries release-manifest release-python release release-clean
+        release-binaries release-manifest release-python release-npm release release-clean
 
 # ----------------------------------------------------------------------------
 # Local builds
@@ -57,10 +58,11 @@ clean:
 # ----------------------------------------------------------------------------
 
 # `make release` produces every artifact needed for a GitHub Release + PyPI
-# upload: 5 platform binaries, a manifest.json (URL+sha256 per binary), and
-# a Python wheel + sdist. All artifacts land in dist/. It does NOT push, tag,
-# or upload anything — see RELEASE.md for the next steps.
-release: release-clean release-binaries release-manifest release-python
+# + npm upload: 5 platform binaries, a manifest.json (URL+sha256 per binary),
+# a Python wheel + sdist, and a packed npm tarball. All artifacts land in
+# dist/. It does NOT push, tag, or upload anything — see RELEASE.md for the
+# next steps.
+release: release-clean release-binaries release-manifest release-python release-npm
 	@echo ""
 	@echo "Release artifacts ready in $(DIST)/ for v$(VERSION):"
 	@ls -la $(DIST) | sed 's/^/  /'
@@ -86,3 +88,13 @@ release-python:
 	@rm -f $(PY_DIR)/orcha/__init__.py.bak
 	@cd $(PY_DIR) && python3 -m build --outdir ../$(DIST) >/dev/null
 	@ls $(DIST)/orcha_dev-*.whl $(DIST)/orcha_dev-*.tar.gz | sed 's/^/    /'
+
+# The npm build stamps package.json's "version" to match VERSION (so the
+# wrapper resolves the right release tag at runtime), then `npm pack`s a
+# publishable tarball into dist/. Requires npm 7+.
+release-npm:
+	@echo "==> npm tarball (v$(VERSION))"
+	@sed -i.bak 's/"version": *"[^"]*"/"version": "$(VERSION)"/' $(NPM_DIR)/package.json
+	@rm -f $(NPM_DIR)/package.json.bak
+	@cd $(NPM_DIR) && npm pack --pack-destination ../$(DIST) >/dev/null
+	@ls $(DIST)/orcha-dev-*.tgz | sed 's/^/    /'

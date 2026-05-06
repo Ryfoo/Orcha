@@ -10,7 +10,11 @@ import (
 
 	"github.com/ryfoo/orcha/internal/ipc"
 
-	// Side-effect import: registers the OpenAI provider in the global registry.
+	// Side-effect imports: register built-in providers in the global
+	// registry. Adding a new provider is a matter of adding another blank
+	// import here (and to the orcha-run / orcha-debug entry points).
+	_ "github.com/ryfoo/orcha/pkg/anthropic"
+	_ "github.com/ryfoo/orcha/pkg/deepseek"
 	_ "github.com/ryfoo/orcha/pkg/openai"
 )
 
