@@ -10,3 +10,5 @@ build/
 venv/
 __debug*
 examples/
+node_modules/
+npm/package-lock.json

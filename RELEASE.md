@@ -6,7 +6,7 @@ The steps to ship a new orcha version.
 ## 0. Prerequisites (one-time)
 
 - A clean working tree (`git status` shows nothing).
-- Go 1.21+ and Python 3.9+ on PATH.
+- Go 1.21+, Python 3.9+, and Node 18+ on PATH.
 - `python3 -m pip install --user build twine` for building and uploading wheels.
 - A PyPI account with a project-scoped API token. Save it to `~/.pypirc`:
 
@@ -16,6 +16,7 @@ The steps to ship a new orcha version.
     password = pypi-<your-token-here>
   ```
 
+- An npm account with publish rights on `orcha-dev` (`npm login` once).
 - Repository write access to `github.com/ryfoo/orcha`.
 
 ## 1. Bump the version
@@ -26,8 +27,9 @@ Edit the single source of truth:
 echo "$VERSION" > VERSION
 ```
 
-Both the Go binary (via `-ldflags`) and the Python wheel (via a sed pass on
-`__init__.py`) read from this file at build time.
+The Go binary (`-ldflags`), the Python wheel (sed pass on `__init__.py`), and
+the npm package (sed pass on `npm/package.json`) all derive their version
+from this file at build time.
 
 ## 2. Build the release artifacts
 
@@ -41,8 +43,9 @@ This produces, in `dist/`:
 - `orcha-darwin-amd64`, `orcha-darwin-arm64`
 - `orcha-windows-amd64.exe`
 - `manifest.json` (URL + sha256 for each binary)
-- `orcha-$VERSION-py3-none-any.whl`
-- `orcha-$VERSION.tar.gz`
+- `orcha_dev-$VERSION-py3-none-any.whl`
+- `orcha_dev-$VERSION.tar.gz`
+- `orcha-dev-$VERSION.tgz` (npm tarball)
 
 Sanity-check the manifest:
 
@@ -55,14 +58,15 @@ cat dist/manifest.json
 ```bash
 make test
 ( cd python && python3 -m pytest tests/ )
+( cd npm && npm test )
 ```
 
-Both must pass before tagging.
+All three must pass before tagging.
 
 ## 4. Commit + tag
 
 ```bash
-git add VERSION python/orcha/__init__.py
+git add VERSION python/orcha/__init__.py npm/package.json
 git commit -m "Release v$VERSION"
 git tag -a "v$VERSION" -m "Orcha v$VERSION"
 git push origin main
@@ -100,7 +104,17 @@ python3 -m twine upload dist/orcha_dev-$VERSION-py3-none-any.whl dist/orcha_dev-
 etc.) before you push; if it fails, fix the issue and rebuild — do not upload
 a broken wheel.
 
-## 7. Verify end-to-end
+## 7. Publish to npm
+
+```bash
+npm publish dist/orcha-dev-$VERSION.tgz --access public
+```
+
+> The tarball already has the right version stamped in (step 2), so you do
+> not need to `cd npm` first — publishing the tarball is byte-identical to
+> publishing the directory.
+
+## 8. Verify end-to-end
 
 In a fresh shell, ideally a different machine or a clean venv:
 
@@ -109,6 +123,14 @@ python3 -m venv /tmp/orcha-test && source /tmp/orcha-test/bin/activate
 pip install orcha-dev
 orcha version          # should print $VERSION
 orcha run --help       # should show the `run` subcommand
+```
+
+And separately for npm:
+
+```bash
+mkdir /tmp/orcha-npm-test && cd /tmp/orcha-npm-test
+npm init -y >/dev/null && npm install orcha-dev
+npx orcha version      # should print $VERSION
 ```
 
 The first `orcha run` against an actual pipeline will trigger the binary
@@ -123,3 +145,6 @@ release is good.
 - **Bad wheel on PyPI:** PyPI does not allow re-uploading a yanked filename.
   Yank the version (`pip install pypi-cli` or via the web UI), bump the
   patch version, and ship `$VERSION+1`. There is no other safe path.
+- **Bad tarball on npm:** `npm unpublish orcha-dev@$VERSION` only works
+  within 72 hours of publish; after that, you must `npm deprecate` the
+  version with a pointer to the fixed release and ship `$VERSION+1`.

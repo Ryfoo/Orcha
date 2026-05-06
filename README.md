@@ -1,6 +1,7 @@
 # Orcha
 
 [![PyPI version](https://badge.fury.io/py/orcha_dev.svg)](https://badge.fury.io/py/orcha_dev)
+[![npm version](https://img.shields.io/npm/v/orcha-dev.svg)](https://www.npmjs.com/package/orcha-dev)
 [![Python Versions](https://img.shields.io/pypi/pyversions/orcha_dev.svg)](https://pypi.org/project/orcha_dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -60,14 +61,18 @@ $ orcha run summarize-article -f ./article.txt
 
 ### Installation
 
-```bash
-#thin Python wrapper around the single-binary
+Pick whichever ecosystem you live in — both ship the same Go engine.
 
+```bash
+# Python — thin wrapper around the single binary.
 pip install orcha-dev
+
+# Node — same wrapper for JS/TS callers
+npm install orcha-dev
 ```
 
 The first time you run `orcha`, it downloads a small Go binary to
-`~/.orcha/bin/` and verifies its sha256. Subsequent runs are zero-network.
+`~/.orcha/bin/`, that's compatible with the system's OS & architecture and verifies its sha256. Subsequent runs are zero-network.
 
 
 ### Hello, world
@@ -126,6 +131,22 @@ for event in o.run("summarize-article", "./article.txt"):
 result = o.run_sync("summarize-article", "./article.txt")
 ```
 
+### From JavaScript / TypeScript
+
+```js
+import { Orcha } from "orcha-dev";
+
+const orcha = await Orcha.create("./orcha.yaml");
+
+// Stream events as the pipeline runs.
+for await (const event of orcha.run("summarize-article", "./article.txt")) {
+  console.log(event.type, event.task, event.elapsed_ms);
+}
+
+// Or get just the final output.
+const result = await orcha.runToCompletion("summarize-article", "./article.txt");
+```
+
 
 ## Project structure
 
@@ -138,7 +159,9 @@ orcha/
 ├── pkg/
 │   ├── provider.go    # Provider plugin interface (Name, DefaultModel, Complete)
 │   ├── registry.go    # global provider registry + env-var key resolution
-│   └── openai/        # built-in OpenAI provider (REST, no SDK dependency)
+│   ├── openai/        # built-in OpenAI provider (REST, no SDK dependency)
+│   ├── anthropic/     # built-in Anthropic Messages provider
+│   └── deepseek/      # built-in DeepSeek provider (OpenAI-compatible)
 ├── internal/
 │   ├── parser/        # YAML loader, schema validation, type-flow check
 │   ├── engine/        # executor, value types, $input/$env interpolation
@@ -146,6 +169,9 @@ orcha/
 │   └── ipc/           # JSON-line stdin/stdout protocol
 ├── python/
 │   └── orcha/         # Python SDK + `orcha` shell command
+├── npm/
+│   ├── bin/orcha.js   # Node CLI shim (mirrors the Python `orcha` script)
+│   └── lib/           # JS/TS programmatic API + binary downloader
 ├── examples/          # sample workflows and inputs
 └── tools/             # build helpers (manifest generation, etc.)
 ```
@@ -156,10 +182,12 @@ orcha/
 
 Resolved from environment variables by convention:
 
-| Provider | Variable               |
-|----------|------------------------|
-| openai   | `OPENAI_API_KEY`       |
-| custom   | `ORCHA_<NAME>_API_KEY` |
+| Provider    | Variable               |
+|-------------|------------------------|
+| `openai`    | `OPENAI_API_KEY`       |
+| `anthropic` | `ANTHROPIC_API_KEY`    |
+| `deepseek`  | `DEEPSEEK_API_KEY`     |
+| custom      | `ORCHA_<NAME>_API_KEY` |
 
 Providers never read env vars directly — the registry passes the key into the
 provider's `Complete()` call. Roll your own by implementing the `Provider`
@@ -196,6 +224,7 @@ Run the full test suite:
 ```bash
 go test ./...
 ( cd python && python -m pytest tests/ )
+( cd npm && npm test )         # requires `make build` first
 ```
 
 Open issues and PRs at https://github.com/ryfoo/orcha.
