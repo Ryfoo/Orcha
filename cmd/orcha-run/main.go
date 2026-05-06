@@ -37,9 +37,11 @@ import (
 	"github.com/ryfoo/orcha/internal/parser"
 	"github.com/ryfoo/orcha/internal/runners"
 
-	// Side-effect import — registers the OpenAI provider so AI tasks with
-	// `provider: openai` work out of the box. Adding a new provider is a
-	// matter of adding another blank import here.
+	// Side-effect imports — register built-in providers so AI tasks with
+	// matching `provider:` values work out of the box. Adding a new
+	// provider is a matter of adding another blank import here.
+	_ "github.com/ryfoo/orcha/pkg/anthropic"
+	_ "github.com/ryfoo/orcha/pkg/deepseek"
 	_ "github.com/ryfoo/orcha/pkg/openai"
 )
 
@@ -61,7 +63,8 @@ func main() {
 		fmt.Fprintln(os.Stderr)
 		fmt.Fprintln(os.Stderr, "Environment:")
 		fmt.Fprintln(os.Stderr, "  OPENAI_API_KEY     used by the openai provider")
-		fmt.Fprintln(os.Stderr, "  ANTHROPIC_API_KEY  used by the anthropic provider (when registered)")
+		fmt.Fprintln(os.Stderr, "  ANTHROPIC_API_KEY  used by the anthropic provider")
+		fmt.Fprintln(os.Stderr, "  DEEPSEEK_API_KEY   used by the deepseek provider")
 	}
 	flag.Parse()
 
