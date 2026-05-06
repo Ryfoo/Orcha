@@ -1,0 +1,7 @@
+# package.json `files` is the source of truth for what gets published.
+# This list is a belt-and-suspenders for dev-only artifacts that should
+# never reach the registry even if someone widens the `files` allowlist.
+test/
+node_modules/
+*.log
+.DS_Store
