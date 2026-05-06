@@ -13,7 +13,7 @@ Public API:
 
 # Defined first because downloader.py imports it at module-load time. Keeping
 # the assignment a single line lets the release Makefile rewrite it via sed.
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 from .events import OrchaEvent
 from .errors import OrchaError, TaskFailed
