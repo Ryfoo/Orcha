@@ -10,6 +10,9 @@ one `orcha.yaml` file; execute them from Node, the shell, or both.
 the Python SDK. The binary is downloaded into `~/.orcha/bin/` on first run
 and verified by sha256; later runs are zero-network.
 
+Note: Linear pipelines (only) are supported
+meaning that when designing a pipeline, know that the output of the N-th steps is the input of the N+1-th step.
+
 ## Install
 
 ```bash
@@ -54,7 +57,7 @@ tasks:
     type: file
     operation: write
     path: "./summary.txt"
-    content: "{{$input}}"
+    content: "./results.txt"
 
 pipelines:
   summarize-article:

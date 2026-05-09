@@ -1,6 +1,6 @@
 {
   "name": "orcha-dev",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Unix pipes for AI workflows. Define tasks and pipelines in YAML; execute with a single Go binary auto-downloaded on first run.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
