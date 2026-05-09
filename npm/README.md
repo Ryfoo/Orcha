@@ -33,6 +33,54 @@ npx orcha version
 Input precedence: `-i` (inline string) → `-f` (file content) → stdin.
 `--json` swaps pretty progress for a JSON-line event stream.
 
+
+## Usage
+
+### orcha.yaml
+
+Example:
+```yaml
+tasks:
+  read-article:
+    type: file
+    path: "{{$input}}"
+
+  summarize:
+    type: ai
+    provider: openai
+    prompt: "Summarize in three bullet points:\n\n{{$input}}"
+
+  save:
+    type: file
+    operation: write
+    path: "./summary.txt"
+    content: "{{$input}}"
+
+pipelines:
+  summarize-article:
+    steps:
+      - task: read-article
+      - task: summarize
+      - task: save
+```
+
+### Defined Formats
+
+file operations:
+```yaml
+task:
+  type: file
+      operation: write/read     #read by default.
+      path: "path/to/seeding/file"     
+      content: "{{$input}}"     #only specified when the operation is write.
+
+task:
+  type: ai
+  provider: openai/anthropic/deepseek                       #the default model will be chosen automatically.
+  model:                                                    #optional if you need to specify a model.
+  prompt: "Summarize in three bullet points:\n\n{{$input}}" #the prompt alongside the input is to be included.
+```
+
 ## Programmatic API
 
 ```js
